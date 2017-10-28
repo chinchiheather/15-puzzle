@@ -15,29 +15,32 @@ export class Board {
     `grid-template-columns: repeat(${numCols}, 1fr);
      grid-template-rows: repeat(${numRows}, 1fr);`);
 
-    const numTiles = numRows * numCols - 1;
+    const numTiles = numRows * numCols;
 
     const tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx + 1);
     this.shuffle(tileIdxs);
+    const blankTileIdx = Math.floor(Math.random() * numTiles);
 
     let curRow = 1;
     let curCol = 1;
     for (let i = 0; i < numTiles; i++) {
+      if (i !== blankTileIdx) {
+        const tile = new Tile({number: tileIdxs[i], size: tileSize});
+        tile.element.setAttribute('style', `
+          grid-column-start: ${curCol};
+          grid-column-end: ${curCol + 1};
+          grid-row-start: ${curRow};
+          grid-row-end: ${curRow + 1};`);
+        this.tiles.push(tile);
+        this.boardContainer.appendChild(tile.element);
+      }
+      
       if (curCol < numCols) {
         curCol++;
       } else {
         curCol = 1;
         curRow++;
       }
-
-      const tile = new Tile({number: tileIdxs[i], size: tileSize});
-      tile.element.setAttribute('style', `
-        grid-column-start: ${curCol};
-        grid-column-end: ${curCol + 1};
-        grid-row-start: ${curRow};
-        grid-row-end: ${curRow + 1};`);
-      this.tiles.push(tile);
-      this.boardContainer.appendChild(tile.element);      
     }
   }
 
