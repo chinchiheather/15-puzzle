@@ -73,6 +73,8 @@ export class Board {
     
       this.tileIdxs[tileIdx] = 0;
       this.tileIdxs[blankSpaceIdx] = number;
+
+      this.calculateWin();
     }
   }
 
@@ -94,6 +96,20 @@ export class Board {
       }
     }
     return '';
+  }
+
+  calculateWin() {
+    let won = true;
+    this.tileIdxs.find((el, idx) => {
+      if (el !== idx + 1 && el > 0) {
+        won = false;
+        return false;
+      }
+    });
+
+    if (won) {
+      console.log('WIN!');
+    }
   }
 
   get element() {
