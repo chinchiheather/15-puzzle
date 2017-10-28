@@ -3,36 +3,42 @@ import { Tile } from './tile.js';
 export class Board {
   constructor({numRows, numCols, tileSize}) {
     this.tiles = [];
+    this.tileIdxs = [];
+    this.numRows = numRows;
+    this.numCols = numCols;
 
-    this.boardContainer = document.createElement('div');
-    this.boardContainer.className = 'board-container';
+    this._element = document.createElement('div');
+    this._element.className = 'board-container';
 
     this.initGrid(numRows, numCols, tileSize);
   }
 
   initGrid(numRows, numCols, tileSize) {
-    this.boardContainer.setAttribute('style', 
+    this._element.setAttribute('style', 
     `grid-template-columns: repeat(${numCols}, 1fr);
      grid-template-rows: repeat(${numRows}, 1fr);`);
 
     const numTiles = numRows * numCols;
 
-    const tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx + 1);
-    this.shuffle(tileIdxs);
-    const blankTileIdx = Math.floor(Math.random() * numTiles);
+    this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
+    this.shuffle(this.tileIdxs);
 
     let curRow = 1;
     let curCol = 1;
     for (let i = 0; i < numTiles; i++) {
-      if (i !== blankTileIdx) {
-        const tile = new Tile({number: tileIdxs[i], size: tileSize});
-        tile.element.setAttribute('style', `
-          grid-column-start: ${curCol};
-          grid-column-end: ${curCol + 1};
-          grid-row-start: ${curRow};
-          grid-row-end: ${curRow + 1};`);
+      if (this.tileIdxs[i] !== 0) {
+        const tile = new Tile({
+          id: i,
+          number: this.tileIdxs[i],
+          size: tileSize,
+          onClickHandler: (number) => {
+            this.onTileClick(number)
+          },
+          row: curRow,
+          col: curCol
+        });
         this.tiles.push(tile);
-        this.boardContainer.appendChild(tile.element);
+        this._element.appendChild(tile.element);
       }
       
       if (curCol < numCols) {
@@ -55,7 +61,42 @@ export class Board {
     }
   }
 
+  onTileClick(number) {
+    const tileIdx = this.tileIdxs.findIndex(el => el === number);
+    const blankSpaceIdx = this.tileIdxs.findIndex(el => el === 0);
+    const dir = this.canMove(tileIdx, blankSpaceIdx);
+    
+    if (dir) {
+      // todo: maybe there is a better way than this?
+      const tile = this.tiles.find(tile => tile.number === number);
+      tile.slide(dir);
+    
+      this.tileIdxs[tileIdx] = 0;
+      this.tileIdxs[blankSpaceIdx] = number;
+    }
+  }
+
+  canMove(tileIdx, blankSpaceIdx) {
+    const tileRow = Math.floor(tileIdx / this.numCols);
+    const blankSpaceRow = Math.floor(blankSpaceIdx / this.numCols);
+
+    if (tileRow === blankSpaceRow) {
+      if (tileIdx === blankSpaceIdx - 1) {
+        return 'right';
+      } else if (tileIdx === blankSpaceIdx + 1) {
+        return 'left';
+      }
+    } else if (tileRow === blankSpaceRow + 1 || tileRow === blankSpaceRow - 1) {
+      if (tileIdx === blankSpaceIdx - this.numCols) {
+        return 'down';
+      } else if (tileIdx === blankSpaceIdx + this.numCols) {
+        return 'up';
+      }
+    }
+    return '';
+  }
+
   get element() {
-    return this.boardContainer;
+    return this._element;
   }
 }
