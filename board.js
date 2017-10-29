@@ -2,10 +2,9 @@ import { Tile } from './tile.js';
 
 export class Board {
   constructor({numRows, numCols, tileSize}) {
-    this.tiles = [];
-    this.tileIdxs = [];
     this.numRows = numRows;
     this.numCols = numCols;
+    this.tileSize = tileSize;
 
     this._boardContainer = document.createElement('div');
     this._boardContainer.className = 'board-container';
@@ -17,6 +16,8 @@ export class Board {
   }
 
   initGrid(numRows, numCols, tileSize) {
+    this.tiles = [];
+    this.tileIdxs = [];
     const numTiles = numRows * numCols;
 
     this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
@@ -110,6 +111,14 @@ export class Board {
       this._winMessage.style.display = 'block';
     }
   }
+  
+  setBoardConfig({numRows, numCols, tileSize}) {
+    this.numRows = numRows;
+    this.numCols = numCols;
+    this.tileSize = tileSize;
+    this._boardContainer.innerHTML = '';
+    this.initGrid(this.numRows, this.numCols, this.tileSize);
+  }  
 
   get element() {
     return this._boardContainer;

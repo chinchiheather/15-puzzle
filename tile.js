@@ -4,8 +4,8 @@ export class Tile {
     this.size = size;
     this._element = document.createElement('div');
     this._element.className = 'tile';
-    // todo: set tile size dynamically
-    // this.tile.style = `width: ${size}px; height: ${size}px;`;
+    this._element.style.width = `${size}px`;
+    this._element.style.height = `${size}px`;
     this._element.innerHTML = `<p>${number}</p>`;
     this._element.onclick = () => {
       onClickHandler(number);
@@ -34,10 +34,8 @@ export class Tile {
   }
 
   _setGridPos(row, col) {
-    this._element.setAttribute('style', `
-      top: ${row * this.size}px;
-      left: ${col * this.size}px;
-    `);
+    this._element.style.top = `${row * this.size}px`;
+    this._element.style.left = `${col * this.size}px`;
   }
 
   get element() {
