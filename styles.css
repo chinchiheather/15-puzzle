@@ -9,4 +9,5 @@
   position: absolute;
   width: 100px;
   height: 100px;
+  transition: all 150ms ease-out;
 }
