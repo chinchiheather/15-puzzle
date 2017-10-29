@@ -7,9 +7,12 @@ export class Board {
     this.numRows = numRows;
     this.numCols = numCols;
 
-    this._element = document.createElement('div');
-    this._element.className = 'board-container';
-
+    this._boardContainer = document.createElement('div');
+    this._boardContainer.className = 'board-container';
+    this._winMessage = document.createElement('div');
+    this._winMessage.style.display = 'none';
+    this._winMessage.innerHTML = '<p>Winner!!</p>';
+    this._boardContainer.appendChild(this._winMessage);
     this.initGrid(numRows, numCols, tileSize);
   }
 
@@ -34,7 +37,7 @@ export class Board {
           col: curCol
         });
         this.tiles.push(tile);
-        this._element.appendChild(tile.element);
+        this._boardContainer.appendChild(tile.element);
       }
       
       if (curCol < numCols) {
@@ -104,11 +107,11 @@ export class Board {
     });
 
     if (won) {
-      console.log('WIN!');
+      this._winMessage.style.display = 'block';
     }
   }
 
   get element() {
-    return this._element;
+    return this._boardContainer;
   }
 }
