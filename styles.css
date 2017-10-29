@@ -1,8 +1,12 @@
 .board-container {
-  display: grid;
+  position: relative;
+  width: 500px;
 }
 
 .tile {
   background-color: cornflowerblue;
-  border: 1px solid mediumslateblue; 
+  border: 1px solid mediumslateblue;
+  position: absolute;
+  width: 100px;
+  height: 100px;
 }

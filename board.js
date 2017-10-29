@@ -14,10 +14,6 @@ export class Board {
   }
 
   initGrid(numRows, numCols, tileSize) {
-    this._element.setAttribute('style', 
-    `grid-template-columns: repeat(${numCols}, 1fr);
-     grid-template-rows: repeat(${numRows}, 1fr);`);
-
     const numTiles = numRows * numCols;
 
     this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
