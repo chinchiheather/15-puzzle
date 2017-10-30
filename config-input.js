@@ -1,5 +1,5 @@
 export class ConfigInput {
-  constructor(label, prop, defaultVal, minVal, onInputChange) {
+  constructor(label, defaultVal, minVal, onInputChange) {
     this.inputContainer = document.createElement('div');
     this.inputContainer.className = 'input-container';
     
@@ -12,7 +12,7 @@ export class ConfigInput {
     inputEl.type = 'number';
     inputEl.value = defaultVal;
     inputEl.setAttribute('min', minVal);
-    inputEl.onchange = (event) => onInputChange(prop, +event.target.value);
+    inputEl.onchange = (event) => onInputChange(+event.target.value);
     this.inputContainer.appendChild(inputEl);
   }
 

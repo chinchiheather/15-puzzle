@@ -56,7 +56,7 @@ export class Board {
       }
     }
 
-    this.boardContainer.style.height = `${this.boardSize * (this.tileSize + 10)}px`;
+    this.calcBoardHeight();
   }
 
   /**
@@ -161,14 +161,23 @@ export class Board {
   }
   
   /**
-   * Clears and rebuilds board using current rows, cols & tile size
+   * Clears and rebuilds board
    */
-  setBoardConfig({boardSize, tileSize}) {
-    this.boardSize = boardSize;
-    this.tileSize = tileSize;
+  setBoardSize(size) {
+    this.boardSize = size;
     this.boardContainer.innerHTML = '';
     this.initBoard();
-  }  
+  }
+
+  setTileSize(size) {
+    this.tileSize = size;
+    this.tiles.forEach(tile => tile.setSize(size));
+    this.calcBoardHeight();
+  }
+
+  calcBoardHeight() {
+    this.boardContainer.style.height = `${this.boardSize * (this.tileSize + 10)}px`;    
+  }
 
   get element() {
     return this.boardContainer;
