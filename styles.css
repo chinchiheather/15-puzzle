@@ -2,33 +2,28 @@ body {
   font-family: Arial, Helvetica, sans-serif;  
 }
 
-.game-container {
-  padding: 15px;
-}
-
-.board-container {
-  position: relative;
-  margin-top: 8px;
-}
-
-.tile {
-  background-color: #d3d3d3;
-  position: absolute;
-  transition: all 150ms ease-out;
-  color: #333333;
-  cursor: pointer;
-}
-
-.tile p {
-  font-weight: bold;
-  margin: 0;
-}
-
 .centre-align {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translateY(-50%) translateX(-50%);
+}
+
+.add-board-btn {
+  background-color: #62b206;
+  color: #ffffff;
+  border-radius: 2px;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 2px 10px #b6b6b6;
+  font-size: 16px;
+  padding: 8px 16px;
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.game-container {
+  padding: 15px;
 }
 
 .input-container {
@@ -53,6 +48,26 @@ body {
   font-size: 18px;
 }
 
+.board-container {
+  position: relative;
+  margin-top: 8px;
+}
+
+.tile {
+  background-color: #d3d3d3;
+  position: absolute;
+  transition: all 150ms ease-out;
+  color: #333333;
+  cursor: pointer;
+}
+
+.tile p {
+  font-weight: bold;
+  margin: 0;
+}
+
+/** game won state **/
+
 .game-container.won .board-container {
   opacity: .5;
   pointer-events: none;
@@ -64,17 +79,4 @@ body {
 
 .game-container.won .winner-message {
   display: block;
-}
-
-.add-board-btn {
-  background-color: #62b206;
-  color: #ffffff;
-  border-radius: 2px;
-  font-weight: bold;
-  border: none;
-  box-shadow: 0 2px 10px #b6b6b6;
-  font-size: 16px;
-  padding: 8px 16px;
-  margin-left: 15px;
-  cursor: pointer;
 }
