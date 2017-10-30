@@ -11,8 +11,8 @@ export class Game {
     this.gameContainer = document.createElement('div');
     this.gameContainer.className = 'game-container';
 
-    this.createInputField('No. rows', 'rows', this.numRows);
-    this.createInputField('No. columns', 'cols', this.numCols);
+    this.createInputField('No. rows', 'numRows', this.numRows);
+    this.createInputField('No. columns', 'numCols', this.numCols);
     this.createInputField('Tile size (px)', 'tileSize', this.tileSize);
 
     this.winMessageEl = document.createElement('div');

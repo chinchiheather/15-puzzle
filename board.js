@@ -25,7 +25,9 @@ export class Board {
 
     // create array of numbers 1..n and then shuffle them
     this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
-    this.shuffle(this.tileIdxs);
+    do {
+      this.shuffle(this.tileIdxs);
+    } while (!this.isSolvable());
 
     // add tiles to board
     let curRow = 1;
@@ -80,6 +82,45 @@ export class Board {
       this.tileIdxs[blankSpaceIdx] = number;
 
       this.calculateWin();
+    }
+  }
+  
+  /**
+   * Taken from https://stackoverflow.com/a/34570524/521531
+   * Using the logic specified in https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+   */
+  isSolvable() {
+    let inversions = 0;
+    let row = 0;
+    let blankSpaceRow = 0;
+  
+    for (let i = 0; i < this.tileIdxs.length; i++) {
+      if (i % this.numCols == 0) {
+        row++;
+      }
+      // the blank tile
+      if (this.tileIdxs[i] == 0) {
+        blankSpaceRow = row;
+        continue;
+      }
+      for (let j = i + 1; j < this.tileIdxs.length; j++) {
+          if (this.tileIdxs[i] > this.tileIdxs[j] && this.tileIdxs[j] != 0) {
+            inversions++;
+          }
+      }
+    }
+  
+    // if grid width is odd, need an odd number of inversions to be solvable
+    // if grid width is even and the blank is on an even row, need an odd number of inversions to be solvable
+    // if grid width is even, and the blank is on an odd row , need an even number of inversion to be solvable
+    if (this.numCols % 2 == 0) {
+      if (blankSpaceRow % 2 == 0) {
+        return inversions % 2 == 0;
+      } else {
+        return inversions % 2 != 0;
+      }
+    } else {
+      return inversions % 2 == 0;
     }
   }
 
