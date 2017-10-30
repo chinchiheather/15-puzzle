@@ -1,7 +1,9 @@
 import { Board } from './board.js';
+import { ConfigInput } from './config-input.js';
 
 export class Game {
   constructor() {
+    // default vals
     this.rows = 4;
     this.cols = 4;
     this.tileSize = 100;
@@ -22,21 +24,8 @@ export class Game {
   }
 
   createInputField(label, prop, defaultVal) {
-    const inputContainer = document.createElement('div');
-    inputContainer.className = 'input-container';
-    
-    const labelEl = document.createElement('label');
-    labelEl.className = 'config-label';
-    labelEl.textContent = label;
-    inputContainer.appendChild(labelEl);
-
-    const inputEl = document.createElement('input');
-    inputEl.type = 'number';
-    inputEl.value = defaultVal;
-    inputEl.onchange = (event) => this.onInputChange(prop, +event.target.value);
-    inputContainer.appendChild(inputEl);
-
-    this.gameContainer.appendChild(inputContainer);
+    const input = new ConfigInput(label, prop, defaultVal, (prop, value) => this.onInputChange(prop, value));
+    this.gameContainer.appendChild(input.element);
   }
 
   onInputChange(prop, value) {
