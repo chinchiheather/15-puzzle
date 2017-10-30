@@ -1,9 +1,8 @@
 import { Tile } from './tile.js';
 
 export class Board {
-  constructor({numRows, numCols, tileSize, onGameWin}) {
-    this.numRows = numRows;
-    this.numCols = numCols;
+  constructor({boardSize, tileSize, onGameWin}) {
+    this.boardSize = boardSize;
     this.tileSize = tileSize;
     this.onGameWin = onGameWin;
 
@@ -21,7 +20,7 @@ export class Board {
     this.tiles = [];
     // contains which tile number is currently at which position on the board
     this.tileIdxs = [];
-    const numTiles = this.numRows * this.numCols;
+    const numTiles = Math.pow(this.boardSize, 2);
 
     // create array of numbers 1..n and then shuffle them
     this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
@@ -47,7 +46,7 @@ export class Board {
         this.boardContainer.appendChild(tile.element);
       }
       
-      if (curCol < this.numCols) {
+      if (curCol < this.boardSize) {
         curCol++;
       } else {
         curCol = 1;
@@ -55,7 +54,7 @@ export class Board {
       }
     }
 
-    this.boardContainer.style.height = `${this.numRows * (this.tileSize + 10)}px`;
+    this.boardContainer.style.height = `${this.boardSize * (this.tileSize + 10)}px`;
   }
 
   /**
@@ -95,7 +94,7 @@ export class Board {
     let blankSpaceRow = 0;
   
     for (let i = 0; i < this.tileIdxs.length; i++) {
-      if (i % this.numCols == 0) {
+      if (i % this.boardSize == 0) {
         row++;
       }
       // the blank tile
@@ -109,11 +108,11 @@ export class Board {
           }
       }
     }
-  
+
     // if grid width is odd, need an odd number of inversions to be solvable
     // if grid width is even and the blank is on an even row, need an odd number of inversions to be solvable
     // if grid width is even, and the blank is on an odd row , need an even number of inversion to be solvable
-    if (this.numCols % 2 == 0) {
+    if (this.boardSize % 2 == 0) {
       if (blankSpaceRow % 2 == 0) {
         return inversions % 2 == 0;
       } else {
@@ -125,8 +124,8 @@ export class Board {
   }
 
   canMove(tileIdx, blankSpaceIdx) {
-    const tileRow = Math.floor(tileIdx / this.numCols);
-    const blankSpaceRow = Math.floor(blankSpaceIdx / this.numCols);
+    const tileRow = Math.floor(tileIdx / this.boardSize);
+    const blankSpaceRow = Math.floor(blankSpaceIdx / this.boardSize);
 
     if (tileRow === blankSpaceRow) {
       if (tileIdx === blankSpaceIdx - 1) {
@@ -134,10 +133,12 @@ export class Board {
       } else if (tileIdx === blankSpaceIdx + 1) {
         return 'left';
       }
-    } else if (tileRow === blankSpaceRow - 1 && tileIdx === blankSpaceIdx - this.numCols) {
+    } else if (tileRow === blankSpaceRow + 1 || tileRow === blankSpaceRow - 1) {
+      if (tileIdx === blankSpaceIdx - this.boardSize) {
         return 'down';
-    } else if (tileRow === blankSpaceRow + 1 && tileIdx === blankSpaceIdx + this.numCols) {
-      return 'up';
+      } else if (tileIdx === blankSpaceIdx + this.boardSize) {
+        return 'up';
+      }
     }
     return '';
   }
@@ -152,17 +153,14 @@ export class Board {
       }
     });
 
-    if (won) {
-      this.onGameWin();
-    }
+    return won;
   }
   
   /**
    * Clears and rebuilds board using current rows, cols & tile size
    */
-  setBoardConfig({numRows, numCols, tileSize}) {
-    this.numRows = numRows;
-    this.numCols = numCols;
+  setBoardConfig({boardSize, tileSize}) {
+    this.boardSize = boardSize;
     this.tileSize = tileSize;
     this.boardContainer.innerHTML = '';
     this.initBoard();

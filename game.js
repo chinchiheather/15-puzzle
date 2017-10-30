@@ -4,16 +4,14 @@ import { ConfigInput } from './config-input.js';
 export class Game {
   constructor() {
     // default vals
-    this.numRows = 4;
-    this.numCols = 4;
+    this.boardSize = 4;
     this.tileSize = 100;
 
     this.gameContainer = document.createElement('div');
     this.gameContainer.className = 'game-container';
 
-    this.createInputField('No. rows', 'numRows', this.numRows);
-    this.createInputField('No. columns', 'numCols', this.numCols);
-    this.createInputField('Tile size (px)', 'tileSize', this.tileSize);
+    this.createInputField('Board size (no. rows/cols)', 'boardSize', this.boardSize, 2);
+    this.createInputField('Tile size (px)', 'tileSize', this.tileSize, 50);
 
     this.winMessageEl = document.createElement('div');
     this.winMessageEl.className = 'winner-message';
@@ -21,24 +19,22 @@ export class Game {
     this.gameContainer.appendChild(this.winMessageEl);
 
     this.board = new Board({
-      numRows: this.numRows,
-      numCols: this.numCols,
+      boardSize: this.boardSize,
       tileSize: this.tileSize,
       onGameWin: () => this.onGameWin()
     });
     this.gameContainer.appendChild(this.board.element);
   }
 
-  createInputField(label, prop, defaultVal) {
-    const input = new ConfigInput(label, prop, defaultVal, (prop, value) => this.onInputChange(prop, value));
+  createInputField(label, prop, defaultVal, minVal) {
+    const input = new ConfigInput(label, prop, defaultVal, minVal, (prop, value) => this.onInputChange(prop, value));
     this.gameContainer.appendChild(input.element);
   }
 
   onInputChange(prop, value) {
     this[prop] = value;
     this.board.setBoardConfig({
-      numRows: this.numRows,
-      numCols: this.numCols,
+      boardSize: this.boardSize,
       tileSize: this.tileSize
     });
   }
