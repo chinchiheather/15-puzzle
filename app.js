@@ -2,7 +2,18 @@ import { Board } from './board.js';
 import { Game } from './game.js';
 
 (() => {
-  var game = new Game();
-  var boardContainer = document.getElementById('15-puzzle');
-  boardContainer.appendChild(game.element);
+  function init() {
+    addGame();
+
+    const addBoardBtn = document.getElementsByClassName('add-board-btn')[0];
+    addBoardBtn.onclick = addGame;
+  }
+
+  function addGame() {
+    const game = new Game();
+    const puzzleContainer = document.getElementById('15-puzzle');
+    puzzleContainer.appendChild(game.element);
+  }
+
+  init();
 })();

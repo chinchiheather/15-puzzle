@@ -52,6 +52,8 @@ export class Board {
         curRow++;
       }
     }
+
+    this.boardContainer.style.height = `${this.numRows * (this.tileSize + 10)}px`;
   }
 
   /**

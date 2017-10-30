@@ -65,3 +65,16 @@ body {
 .game-container.won .winner-message {
   display: block;
 }
+
+.add-board-btn {
+  background-color: #62b206;
+  color: #ffffff;
+  border-radius: 2px;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 2px 10px #b6b6b6;
+  font-size: 16px;
+  padding: 8px 16px;
+  margin-left: 15px;
+  cursor: pointer;
+}
