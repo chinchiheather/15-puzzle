@@ -22,11 +22,13 @@ export class Board {
     this.tileIdxs = [];
     const numTiles = Math.pow(this.boardSize, 2);
 
-    // create array of numbers 1..n and then shuffle them
+    // create array of numbers 1..n
     this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
+    
+    // ensure game can be won and isnt already a winning game
     do {
       this.shuffle(this.tileIdxs);
-    } while (!this.isSolvable());
+    } while (!this.isSolvable() || this.isWin());
 
     // add tiles to board
     let curRow = 1;
@@ -80,7 +82,9 @@ export class Board {
       this.tileIdxs[tileIdx] = 0;
       this.tileIdxs[blankSpaceIdx] = number;
 
-      this.calculateWin();
+      if (this.isWin()) {
+        this.onGameWin();
+      }
     }
   }
   
@@ -143,7 +147,7 @@ export class Board {
     return '';
   }
 
-  calculateWin() {
+  isWin() {
     let won = true;
     // checks if numbers in tileIdxs array are in numeric order
     this.tileIdxs.find((el, idx) => {
