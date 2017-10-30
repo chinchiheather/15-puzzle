@@ -22,16 +22,21 @@ export class Game {
   }
 
   createInputField(label, prop, defaultVal) {
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'input-container';
+    
     const labelEl = document.createElement('label');
     labelEl.className = 'config-label';
     labelEl.textContent = label;
-    this.gameContainer.appendChild(labelEl);
+    inputContainer.appendChild(labelEl);
 
     const inputEl = document.createElement('input');
     inputEl.type = 'number';
     inputEl.value = defaultVal;
     inputEl.onchange = (event) => this.onInputChange(prop, +event.target.value);
-    this.gameContainer.appendChild(inputEl);
+    inputContainer.appendChild(inputEl);
+
+    this.gameContainer.appendChild(inputContainer);
   }
 
   onInputChange(prop, value) {
