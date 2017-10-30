@@ -6,38 +6,44 @@ export class Game {
     this.cols = 4;
     this.tileSize = 100;
 
-    this.createInputField('Number of rows', 'rows', 4);
-    this.createInputField('Number of columns', 'cols', 4);
-    this.createInputField('Tile size (px)', 'tileSize', 100);
+    this.gameContainer = document.createElement('div');
+    this.gameContainer.className = 'game-container';
+
+    this.createInputField('No. rows', 'rows', this.rows);
+    this.createInputField('No. columns', 'cols', this.cols);
+    this.createInputField('Tile size (px)', 'tileSize', this.tileSize);
 
     this.board = new Board({
       numRows: this.rows,
       numCols: this.cols,
       tileSize: this.tileSize
     });
-    var boardContainer = document.getElementById('15-puzzle');
-    boardContainer.appendChild(this.board.element);
+    this.gameContainer.appendChild(this.board.element);
   }
 
   createInputField(label, prop, defaultVal) {
     const labelEl = document.createElement('label');
-    labelEl.textContent = name;
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.value = defaultVal;
-    input.onchange = (event) => {
-      this[prop] = +event.target.value;
-      this.board.setBoardConfig({
-        numRows: this.rows,
-        numCols: this.cols,
-        tileSize: this.tileSize
-      });
-    }
-    var boardContainer = document.getElementById('15-puzzle');
-    boardContainer.appendChild(labelEl);
-    boardContainer.appendChild(input);
+    labelEl.className = 'config-label';
+    labelEl.textContent = label;
+    this.gameContainer.appendChild(labelEl);
 
+    const inputEl = document.createElement('input');
+    inputEl.type = 'number';
+    inputEl.value = defaultVal;
+    inputEl.onchange = (event) => this.onInputChange(prop, +event.target.value);
+    this.gameContainer.appendChild(inputEl);
   }
 
+  onInputChange(prop, value) {
+    this[prop] = value;
+    this.board.setBoardConfig({
+      numRows: this.rows,
+      numCols: this.cols,
+      tileSize: this.tileSize
+    });
+  }
 
+  get element() {
+    return this.gameContainer;
+  }
 }
