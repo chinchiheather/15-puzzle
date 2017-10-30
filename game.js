@@ -4,21 +4,27 @@ import { ConfigInput } from './config-input.js';
 export class Game {
   constructor() {
     // default vals
-    this.rows = 4;
-    this.cols = 4;
+    this.numRows = 4;
+    this.numCols = 4;
     this.tileSize = 100;
 
     this.gameContainer = document.createElement('div');
     this.gameContainer.className = 'game-container';
 
-    this.createInputField('No. rows', 'rows', this.rows);
-    this.createInputField('No. columns', 'cols', this.cols);
+    this.createInputField('No. rows', 'rows', this.numRows);
+    this.createInputField('No. columns', 'cols', this.numCols);
     this.createInputField('Tile size (px)', 'tileSize', this.tileSize);
 
+    this.winMessageEl = document.createElement('div');
+    this.winMessageEl.className = 'winner-message';
+    this.winMessageEl.innerHTML = '<p>WINNER!!</p>';
+    this.gameContainer.appendChild(this.winMessageEl);
+
     this.board = new Board({
-      numRows: this.rows,
-      numCols: this.cols,
-      tileSize: this.tileSize
+      numRows: this.numRows,
+      numCols: this.numCols,
+      tileSize: this.tileSize,
+      onGameWin: () => this.onGameWin()
     });
     this.gameContainer.appendChild(this.board.element);
   }
@@ -31,10 +37,14 @@ export class Game {
   onInputChange(prop, value) {
     this[prop] = value;
     this.board.setBoardConfig({
-      numRows: this.rows,
-      numCols: this.cols,
+      numRows: this.numRows,
+      numCols: this.numCols,
       tileSize: this.tileSize
     });
+  }
+
+  onGameWin() {
+    this.gameContainer.className += ' won';    
   }
 
   get element() {

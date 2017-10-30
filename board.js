@@ -1,36 +1,40 @@
 import { Tile } from './tile.js';
 
 export class Board {
-  constructor({numRows, numCols, tileSize}) {
+  constructor({numRows, numCols, tileSize, onGameWin}) {
     this.numRows = numRows;
     this.numCols = numCols;
     this.tileSize = tileSize;
+    this.onGameWin = onGameWin;
 
-    this._boardContainer = document.createElement('div');
-    this._boardContainer.className = 'board-container';
-    this._winMessage = document.createElement('div');
-    this._winMessage.style.display = 'none';
-    this._winMessage.innerHTML = '<p>Winner!!</p>';
-    this._boardContainer.appendChild(this._winMessage);
-    this.initGrid(numRows, numCols, tileSize);
+    this.boardContainer = document.createElement('div');
+    this.boardContainer.className = 'board-container';
+    
+    this.initBoard();
   }
 
-  initGrid(numRows, numCols, tileSize) {
+  /**
+   * Sets up board, creating tile arrays and adding tile elements to board
+   */
+  initBoard() {
+    // contains tile class instances
     this.tiles = [];
+    // contains which tile number is currently at which position on the board
     this.tileIdxs = [];
-    const numTiles = numRows * numCols;
+    const numTiles = this.numRows * this.numCols;
 
+    // create array of numbers 1..n and then shuffle them
     this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
     this.shuffle(this.tileIdxs);
 
+    // add tiles to board
     let curRow = 1;
     let curCol = 1;
     for (let i = 0; i < numTiles; i++) {
       if (this.tileIdxs[i] !== 0) {
         const tile = new Tile({
-          id: i,
           number: this.tileIdxs[i],
-          size: tileSize,
+          size: this.tileSize,
           onClickHandler: (number) => {
             this.onTileClick(number)
           },
@@ -38,10 +42,10 @@ export class Board {
           col: curCol
         });
         this.tiles.push(tile);
-        this._boardContainer.appendChild(tile.element);
+        this.boardContainer.appendChild(tile.element);
       }
       
-      if (curCol < numCols) {
+      if (curCol < this.numCols) {
         curCol++;
       } else {
         curCol = 1;
@@ -67,10 +71,9 @@ export class Board {
     const dir = this.canMove(tileIdx, blankSpaceIdx);
     
     if (dir) {
-      // todo: maybe there is a better way than this?
+      // moves tile and update tileIdxs array with current board state
       const tile = this.tiles.find(tile => tile.number === number);
       tile.slide(dir);
-    
       this.tileIdxs[tileIdx] = 0;
       this.tileIdxs[blankSpaceIdx] = number;
 
@@ -88,18 +91,17 @@ export class Board {
       } else if (tileIdx === blankSpaceIdx + 1) {
         return 'left';
       }
-    } else if (tileRow === blankSpaceRow + 1 || tileRow === blankSpaceRow - 1) {
-      if (tileIdx === blankSpaceIdx - this.numCols) {
+    } else if (tileRow === blankSpaceRow - 1 && tileIdx === blankSpaceIdx - this.numCols) {
         return 'down';
-      } else if (tileIdx === blankSpaceIdx + this.numCols) {
-        return 'up';
-      }
+    } else if (tileRow === blankSpaceRow + 1 && tileIdx === blankSpaceIdx + this.numCols) {
+      return 'up';
     }
     return '';
   }
 
   calculateWin() {
     let won = true;
+    // checks if numbers in tileIdxs array are in numeric order
     this.tileIdxs.find((el, idx) => {
       if (el !== idx + 1 && el > 0) {
         won = false;
@@ -108,19 +110,22 @@ export class Board {
     });
 
     if (won) {
-      this._winMessage.style.display = 'block';
+      this.onGameWin();
     }
   }
   
+  /**
+   * Clears and rebuilds board using current rows, cols & tile size
+   */
   setBoardConfig({numRows, numCols, tileSize}) {
     this.numRows = numRows;
     this.numCols = numCols;
     this.tileSize = tileSize;
-    this._boardContainer.innerHTML = '';
-    this.initGrid(this.numRows, this.numCols, this.tileSize);
+    this.boardContainer.innerHTML = '';
+    this.initBoard();
   }  
 
   get element() {
-    return this._boardContainer;
+    return this.boardContainer;
   }
 }

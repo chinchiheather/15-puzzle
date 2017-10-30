@@ -45,3 +45,23 @@ body {
   border-radius: 4px;
   border: 1px solid #cccccc;
 }
+
+.winner-message {
+  display: none;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+}
+
+.game-container.won .board-container {
+  opacity: .5;
+  pointer-events: none;
+}
+
+.game-container.won .input-container {
+  display: none;
+}
+
+.game-container.won .winner-message {
+  display: block;
+}
