@@ -10,10 +10,8 @@ export class Game {
     const boardSize = 4;
     const tileSize = 100;
 
-    this.createInputField('Board size (no. rows/cols)', boardSize, 2,
-      (value) => this.onBoardSizeChange(value));
-    this.createInputField('Tile size (px)', tileSize, 50,
-      (value) => this.onTileSizeChange(value));
+    this.createInputField('Board size (no. rows/cols)', boardSize, 2, (value) => this.onBoardSizeChange(value));
+    this.createInputField('Tile size (px)', tileSize, 50, (value) => this.onTileSizeChange(value));
 
     this.winMessageEl = document.createElement('div');
     this.winMessageEl.className = 'winner-message';
@@ -29,8 +27,7 @@ export class Game {
   }
 
   createInputField(label, defaultVal, minVal, onInputChange) {
-    const input = new ConfigInput(label, defaultVal, minVal,
-      (value) => onInputChange(value));
+    const input = new ConfigInput(label, defaultVal, minVal, (value) => onInputChange(value));
     this.gameContainer.appendChild(input.element);
   }
 

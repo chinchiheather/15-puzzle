@@ -5,6 +5,12 @@ export class Board {
     this.boardSize = boardSize;
     this.tileSize = tileSize;
     this.onGameWin = onGameWin;
+    this.tileMargin = 0;
+
+    // contains Tile class instances
+    this.tiles = [];
+    // contains which tile number is currently at which position on the board, 0 is the blank space
+    this.tileIdxs = [];
 
     this.boardContainer = document.createElement('div');
     this.boardContainer.className = 'board-container';
@@ -17,15 +23,11 @@ export class Board {
    * Sets up board, creating tile arrays and adding tile elements to board
    */
   initBoard() {
-    // contains tile class instances
-    this.tiles = [];
-    // contains which tile number is currently at which position on the board
-    this.tileIdxs = [];
     const numTiles = Math.pow(this.boardSize, 2);
-
-    // create array of numbers 1..n
+    this.tiles = [];
+    // create array of numbers 0..n-1
     this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
-    
+
     // ensure game can be won and isnt already a winning game
     do {
       this.shuffle(this.tileIdxs);
@@ -57,27 +59,16 @@ export class Board {
       }
     }
 
-    this.calcBoardHeight();
-  }
-
-  /**
-   * Taken from https://stackoverflow.com/a/6274381/521531
-   * Shuffles array in place
-   */
-  shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
+    this.setBoardHeight();
   }
 
   onTileClick(number) {
     const tileIdx = this.tileIdxs.findIndex(el => el === number);
     const blankSpaceIdx = this.tileIdxs.findIndex(el => el === 0);
     const dir = this.canMove(tileIdx, blankSpaceIdx);
-    
+
     if (dir) {
-      // moves tile and update tileIdxs array with current board state
+      // move tile and update tileIdxs array
       const tile = this.tiles.find(tile => tile.number === number);
       tile.slide(dir);
       this.tileIdxs[tileIdx] = 0;
@@ -88,25 +79,28 @@ export class Board {
       }
     }
   }
-  
+
+  /**
+   * Taken from https://stackoverflow.com/a/6274381/521531
+   * Uses the Fisher-Yates algorithm to shuffle array in place
+   */
+  shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+  }
+
   /**
    * Taken from https://stackoverflow.com/a/34570524/521531
    * Using the logic specified in https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
    */
   isSolvable() {
+    const blankSpaceIdx = this.tileIdxs.findIndex(el => el === 0);
+    const blankSpaceRow = Math.floor(blankSpaceIdx / this.boardSize);
+
     let inversions = 0;
-    let row = 0;
-    let blankSpaceRow = 0;
-  
     for (let i = 0; i < this.tileIdxs.length; i++) {
-      if (i % this.boardSize == 0) {
-        row++;
-      }
-      // the blank tile
-      if (this.tileIdxs[i] == 0) {
-        blankSpaceRow = row;
-        continue;
-      }
       for (let j = i + 1; j < this.tileIdxs.length; j++) {
           if (this.tileIdxs[i] > this.tileIdxs[j] && this.tileIdxs[j] != 0) {
             inversions++;
@@ -117,17 +111,21 @@ export class Board {
     // if grid width is odd, need an odd number of inversions to be solvable
     // if grid width is even and the blank is on an even row, need an odd number of inversions to be solvable
     // if grid width is even, and the blank is on an odd row , need an even number of inversion to be solvable
-    if (this.boardSize % 2 == 0) {
-      if (blankSpaceRow % 2 == 0) {
-        return inversions % 2 == 0;
+    if (this.boardSize % 2 === 0) {
+      if (blankSpaceRow % 2 !== 0) {
+        return inversions % 2 === 0;
       } else {
-        return inversions % 2 != 0;
+        return inversions % 2 !== 0;
       }
     } else {
-      return inversions % 2 == 0;
+      return inversions % 2 === 0;
     }
   }
 
+  /**
+   * Calculates whether the tile at tileIdx can move into blankSpaceIdx and if so what direction that would be in
+   * (left, right, up or down), returns empty string if tile cannot move
+   */
   canMove(tileIdx, blankSpaceIdx) {
     const tileRow = Math.floor(tileIdx / this.boardSize);
     const blankSpaceRow = Math.floor(blankSpaceIdx / this.boardSize);
@@ -138,12 +136,10 @@ export class Board {
       } else if (tileIdx === blankSpaceIdx + 1) {
         return 'left';
       }
-    } else if (tileRow === blankSpaceRow + 1 || tileRow === blankSpaceRow - 1) {
-      if (tileIdx === blankSpaceIdx - this.boardSize) {
-        return 'down';
-      } else if (tileIdx === blankSpaceIdx + this.boardSize) {
-        return 'up';
-      }
+    } else if (tileRow === blankSpaceRow - 1 && tileIdx === blankSpaceIdx - this.boardSize) {
+      return 'down';
+    } else if (tileRow === blankSpaceRow + 1 && tileIdx === blankSpaceIdx + this.boardSize) {
+      return 'up';
     }
     return '';
   }
