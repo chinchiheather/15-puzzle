@@ -8,7 +8,8 @@ export class Board {
 
     this.boardContainer = document.createElement('div');
     this.boardContainer.className = 'board-container';
-    
+
+    this.calcTileMargin();
     this.initBoard();
   }
 
@@ -34,20 +35,20 @@ export class Board {
     let curRow = 1;
     let curCol = 1;
     for (let i = 0; i < numTiles; i++) {
+      // 0 is the blank space
       if (this.tileIdxs[i] !== 0) {
         const tile = new Tile({
           number: this.tileIdxs[i],
           size: this.tileSize,
-          onClickHandler: (number) => {
-            this.onTileClick(number)
-          },
+          margin: this.tileMargin,
           row: curRow,
-          col: curCol
+          col: curCol,
+          onClickHandler: (number) => this.onTileClick(number)
         });
         this.tiles.push(tile);
         this.boardContainer.appendChild(tile.element);
       }
-      
+
       if (curCol < this.boardSize) {
         curCol++;
       } else {
@@ -171,12 +172,20 @@ export class Board {
 
   setTileSize(size) {
     this.tileSize = size;
-    this.tiles.forEach(tile => tile.setSize(size));
-    this.calcBoardHeight();
+    this.calcTileMargin();
+    this.tiles.forEach(tile => {
+      tile.setSize(this.tileSize, this.tileMargin);
+      tile.position();
+    });
+    this.setBoardHeight();
   }
 
-  calcBoardHeight() {
-    this.boardContainer.style.height = `${this.boardSize * (this.tileSize + 10)}px`;    
+  setBoardHeight() {
+    this.boardContainer.style.height = `${this.boardSize * (this.tileSize + this.tileMargin)}px`;
+  }
+
+  calcTileMargin() {
+    this.tileMargin = this.tileSize * 0.1;
   }
 
   get element() {
