@@ -19,11 +19,17 @@ export class Tile {
     this.tileEl.style.height = `${this.size}px`;
   }
 
+  /**
+   * Sets tile's position using row, col, size & margin properties
+   */
   position() {
     this.tileEl.style.top = `${(this.row - 1) * (this.size + this.margin)}px`;
     this.tileEl.style.left = `${(this.col - 1) * (this.size + this.margin)}px`;
   }
 
+  /**
+   * Moves tile one space in specified direction
+   */
   slide(dir) {
     switch (dir) {
       case 'left':
