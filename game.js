@@ -11,7 +11,7 @@ export class Game {
     const tileSize = 100;
 
     this.createInputField('Board size (no. rows/cols)', boardSize, 2, (value) => this.onBoardSizeChange(value));
-    this.createInputField('Tile size (px)', tileSize, 50, (value) => this.onTileSizeChange(value));
+    this.createInputField('Tile size (px)', tileSize, 25, (value) => this.onTileSizeChange(value));
 
     this.winMessageEl = document.createElement('div');
     this.winMessageEl.className = 'winner-message';
