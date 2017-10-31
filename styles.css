@@ -44,7 +44,6 @@ body {
 .game-container .winner-message {
   display: none;
   font-weight: bold;
-  text-align: center;
   font-size: 18px;
 }
 

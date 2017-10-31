@@ -1,4 +1,5 @@
 import { Tile } from './tile.js';
+import { Helpers } from './helpers.js';
 
 export class Board {
   constructor({boardSize, tileSize, onGameWin}) {
@@ -30,7 +31,7 @@ export class Board {
 
     // ensure game can be won and isnt already a winning game
     do {
-      this.shuffle(this.tileIdxs);
+      Helpers.shuffleArray(this.tileIdxs);
     } while (!this.isSolvable() || this.isWin());
 
     // add tiles to board
@@ -77,17 +78,6 @@ export class Board {
       if (this.isWin()) {
         this.onGameWin();
       }
-    }
-  }
-
-  /**
-   * Taken from https://stackoverflow.com/a/6274381/521531
-   * Uses the Fisher-Yates algorithm to shuffle array in place
-   */
-  shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
     }
   }
 
