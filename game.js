@@ -43,7 +43,7 @@ export class Game {
   }
 
   onGameWin() {
-    this.gameContainer.className += ' won';    
+    this.gameContainer.className += ' won';
   }
 
   get element() {

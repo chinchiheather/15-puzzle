@@ -1,4 +1,3 @@
-import { Board } from './board.js';
 import { Game } from './game.js';
 
 (() => {

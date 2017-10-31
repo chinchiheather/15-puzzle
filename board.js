@@ -154,13 +154,13 @@ export class Board {
     this.tileIdxs.find((el, idx) => {
       if (el !== idx + 1 && el > 0) {
         won = false;
-        return false;
+        return true;
       }
     });
 
     return won;
   }
-  
+
   /**
    * Clears and rebuilds board
    */

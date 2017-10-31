@@ -13,7 +13,6 @@
   "author": "Heather Roberts <heather.roberts427@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "http-server": "^0.10.0",
     "watch-http-server": "^0.7.6"
   }
 }
