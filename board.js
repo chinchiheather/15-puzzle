@@ -86,8 +86,8 @@ export class Board {
    */
   shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
     }
   }
 
@@ -102,9 +102,9 @@ export class Board {
     let inversions = 0;
     for (let i = 0; i < this.tileIdxs.length; i++) {
       for (let j = i + 1; j < this.tileIdxs.length; j++) {
-          if (this.tileIdxs[i] > this.tileIdxs[j] && this.tileIdxs[j] != 0) {
-            inversions++;
-          }
+        if (this.tileIdxs[i] > this.tileIdxs[j] && this.tileIdxs[j] != 0) {
+          inversions++;
+        }
       }
     }
 

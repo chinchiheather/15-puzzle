@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, Helvetica, sans-serif;  
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .centre-align {
@@ -41,7 +41,7 @@ body {
   border: 1px solid #cccccc;
 }
 
-.winner-message {
+.game-container .winner-message {
   display: none;
   font-weight: bold;
   text-align: center;
@@ -53,7 +53,7 @@ body {
   margin-top: 8px;
 }
 
-.tile {
+.board-container .tile {
   background-color: #d3d3d3;
   position: absolute;
   transition: all 150ms ease-out;
@@ -61,12 +61,12 @@ body {
   cursor: pointer;
 }
 
-.tile p {
+.board-container .tile p {
   font-weight: bold;
   margin: 0;
 }
 
-/** game won state **/
+/** game won state, disable board and show win message in place of inputs **/
 
 .game-container.won .board-container {
   opacity: .5;
