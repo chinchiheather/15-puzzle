@@ -1,5 +1,5 @@
 import { Tile } from './tile.js';
-import { Helpers } from './helpers.js';
+import { Helpers } from '../helpers.js';
 
 export class Board {
   constructor({boardSize, tileSize, onGameWin}) {
@@ -7,16 +7,13 @@ export class Board {
     this.tileSize = tileSize;
     this.onGameWin = onGameWin;
     this.tileMargin = 0;
-
-    // contains Tile class instances
     this.tiles = [];
-    // contains which tile number is currently at which position on the board, 0 is the blank space
-    this.tileIdxs = [];
+    this.tileOrder = [];
 
     this.boardContainer = document.createElement('div');
     this.boardContainer.className = 'board-container';
 
-    this.calcTileMargin();
+    this.setTileMargin();
     this.initBoard();
   }
 
@@ -25,23 +22,25 @@ export class Board {
    */
   initBoard() {
     const numTiles = Math.pow(this.boardSize, 2);
+    // contains Tile class instances
     this.tiles = [];
-    // create array of numbers 0..n-1
-    this.tileIdxs = Array(numTiles).fill(0).map((el, idx) => idx);
+    // contains which tile number is currently at which position on the board (0 is the blank space)
+    // initialise it with array of numbers 0..n-1
+    this.tileOrder = Array(numTiles).fill(0).map((el, idx) => idx);
 
     // ensure game can be won and isnt already a winning game
     do {
-      Helpers.shuffleArray(this.tileIdxs);
-    } while (!this.isSolvable() || this.isWin());
+      Helpers.shuffleArray(this.tileOrder);
+    } while (!this.isSolvable() || this.hasWon());
 
     // add tiles to board
     let curRow = 1;
     let curCol = 1;
     for (let i = 0; i < numTiles; i++) {
       // 0 is the blank space
-      if (this.tileIdxs[i] !== 0) {
+      if (this.tileOrder[i] !== 0) {
         const tile = new Tile({
-          number: this.tileIdxs[i],
+          number: this.tileOrder[i],
           size: this.tileSize,
           margin: this.tileMargin,
           row: curRow,
@@ -64,18 +63,18 @@ export class Board {
   }
 
   onTileClick(number) {
-    const tileIdx = this.tileIdxs.findIndex(el => el === number);
-    const blankSpaceIdx = this.tileIdxs.findIndex(el => el === 0);
-    const dir = this.canMove(tileIdx, blankSpaceIdx);
+    const tileIdx = this.tileOrder.findIndex(el => el === number);
+    const blankSpaceIdx = this.tileOrder.findIndex(el => el === 0);
+    const dir = this.getTileMoveDirection(tileIdx, blankSpaceIdx);
 
     if (dir) {
-      // move tile and update tileIdxs array
+      // move tile and update tileOrder array
       const tile = this.tiles.find(tile => tile.number === number);
       tile.slide(dir);
-      this.tileIdxs[tileIdx] = 0;
-      this.tileIdxs[blankSpaceIdx] = number;
+      this.tileOrder[tileIdx] = 0;
+      this.tileOrder[blankSpaceIdx] = number;
 
-      if (this.isWin()) {
+      if (this.hasWon()) {
         this.onGameWin();
       }
     }
@@ -86,13 +85,13 @@ export class Board {
    * Using the logic specified in https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
    */
   isSolvable() {
-    const blankSpaceIdx = this.tileIdxs.findIndex(el => el === 0);
+    const blankSpaceIdx = this.tileOrder.findIndex(el => el === 0);
     const blankSpaceRow = Math.floor(blankSpaceIdx / this.boardSize);
 
     let inversions = 0;
-    for (let i = 0; i < this.tileIdxs.length; i++) {
-      for (let j = i + 1; j < this.tileIdxs.length; j++) {
-        if (this.tileIdxs[i] > this.tileIdxs[j] && this.tileIdxs[j] != 0) {
+    for (let i = 0; i < this.tileOrder.length; i++) {
+      for (let j = i + 1; j < this.tileOrder.length; j++) {
+        if (this.tileOrder[i] > this.tileOrder[j] && this.tileOrder[j] != 0) {
           inversions++;
         }
       }
@@ -116,7 +115,7 @@ export class Board {
    * Calculates whether the tile at tileIdx can move into blankSpaceIdx and if so what direction that would be in
    * (left, right, up or down), returns empty string if tile cannot move
    */
-  canMove(tileIdx, blankSpaceIdx) {
+  getTileMoveDirection(tileIdx, blankSpaceIdx) {
     const tileRow = Math.floor(tileIdx / this.boardSize);
     const blankSpaceRow = Math.floor(blankSpaceIdx / this.boardSize);
 
@@ -126,25 +125,21 @@ export class Board {
       } else if (tileIdx === blankSpaceIdx + 1) {
         return 'left';
       }
-    } else if (tileRow === blankSpaceRow - 1 && tileIdx === blankSpaceIdx - this.boardSize) {
-      return 'down';
-    } else if (tileRow === blankSpaceRow + 1 && tileIdx === blankSpaceIdx + this.boardSize) {
-      return 'up';
+    } else if (Math.abs(tileRow - blankSpaceRow) === 1) {
+      if (tileIdx === blankSpaceIdx - this.boardSize) {
+        return 'down';
+      } else if (tileIdx === blankSpaceIdx + this.boardSize) {
+        return 'up';
+      }
     }
     return '';
   }
 
-  isWin() {
-    let won = true;
-    // checks if numbers in tileIdxs array are in numeric order
-    this.tileIdxs.find((el, idx) => {
-      if (el !== idx + 1 && el > 0) {
-        won = false;
-        return true;
-      }
-    });
-
-    return won;
+  hasWon() {
+    // checks if numbers in tileOrder array are in numeric order
+    return this.tileOrder.every((number, i) =>
+      number === i + 1 || number === 0
+    );
   }
 
   /**
@@ -158,11 +153,8 @@ export class Board {
 
   setTileSize(size) {
     this.tileSize = size;
-    this.calcTileMargin();
-    this.tiles.forEach(tile => {
-      tile.setSize(this.tileSize, this.tileMargin);
-      tile.position();
-    });
+    this.setTileMargin();
+    this.tiles.forEach(tile => tile.setSize(this.tileSize, this.tileMargin));
     this.setBoardHeight();
   }
 
@@ -170,7 +162,7 @@ export class Board {
     this.boardContainer.style.height = `${this.boardSize * (this.tileSize + this.tileMargin)}px`;
   }
 
-  calcTileMargin() {
+  setTileMargin() {
     this.tileMargin = this.tileSize * 0.1;
   }
 

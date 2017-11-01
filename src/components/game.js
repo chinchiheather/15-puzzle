@@ -13,14 +13,11 @@ export class Game {
     this.createInputField('Board size (no. rows/cols)', boardSize, 2, (value) => this.onBoardSizeChange(value));
     this.createInputField('Tile size (px)', tileSize, 25, (value) => this.onTileSizeChange(value));
 
-    this.winMessageEl = document.createElement('div');
-    this.winMessageEl.className = 'winner-message';
-    this.winMessageEl.innerHTML = '<p>WINNER!!</p>';
-    this.gameContainer.appendChild(this.winMessageEl);
+    this.createWinMessageEl('WINNER!!');
 
     this.board = new Board({
-      boardSize: boardSize,
-      tileSize: tileSize,
+      boardSize,
+      tileSize,
       onGameWin: () => this.onGameWin()
     });
     this.gameContainer.appendChild(this.board.element);
@@ -29,6 +26,13 @@ export class Game {
   createInputField(label, defaultVal, minVal, onInputChange) {
     const input = new ConfigInput(label, defaultVal, minVal, (value) => onInputChange(value));
     this.gameContainer.appendChild(input.element);
+  }
+
+  createWinMessageEl(winText) {
+    this.winMessageEl = document.createElement('div');
+    this.winMessageEl.className = 'winner-message';
+    this.winMessageEl.innerHTML = `<p>${winText}</p>`;
+    this.gameContainer.appendChild(this.winMessageEl);
   }
 
   onBoardSizeChange(value) {
@@ -40,7 +44,7 @@ export class Game {
   }
 
   onGameWin() {
-    this.gameContainer.className += ' won';
+    this.gameContainer.classList.add('won');
   }
 
   get element() {
