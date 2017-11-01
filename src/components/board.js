@@ -88,10 +88,13 @@ export class Board {
     const blankSpaceIdx = this.tileOrder.findIndex(el => el === 0);
     const blankSpaceRow = Math.floor(blankSpaceIdx / this.boardSize);
 
+    // An inversion is a when a tile is followed by a tile with a higher number
+    // We loop over every tile, incrementing the inversions counter for every tile with a higher number
+    // that comes after it in the board
     let inversions = 0;
     for (let i = 0; i < this.tileOrder.length; i++) {
       for (let j = i + 1; j < this.tileOrder.length; j++) {
-        if (this.tileOrder[i] > this.tileOrder[j] && this.tileOrder[j] != 0) {
+        if (this.tileOrder[i] > this.tileOrder[j] && this.tileOrder[j] !== 0) {
           inversions++;
         }
       }
@@ -99,7 +102,7 @@ export class Board {
 
     // if grid width is odd, need an odd number of inversions to be solvable
     // if grid width is even and the blank is on an even row, need an odd number of inversions to be solvable
-    // if grid width is even, and the blank is on an odd row , need an even number of inversion to be solvable
+    // if grid width is even, and the blank is on an odd row , need an even number of inversions to be solvable
     if (this.boardSize % 2 === 0) {
       if (blankSpaceRow % 2 !== 0) {
         return inversions % 2 === 0;
@@ -113,7 +116,7 @@ export class Board {
 
   /**
    * Calculates whether the tile at tileIdx can move into blankSpaceIdx and if so what direction that would be in
-   * (left, right, up or down), returns empty string if tile cannot move
+   * (left, right, up or down), returns an empty string if the tile cannot move
    */
   getTileMoveDirection(tileIdx, blankSpaceIdx) {
     const tileRow = Math.floor(tileIdx / this.boardSize);
@@ -136,9 +139,10 @@ export class Board {
   }
 
   hasWon() {
-    // checks if numbers in tileOrder array are in numeric order
+    // checks if numbers in tileOrder array are in numeric order, skipping the last tile
+    // as this will have a number of 0 for the blank tile in a winning layout
     return this.tileOrder.every((number, i) =>
-      number === i + 1 || number === 0
+      number === i + 1 || i === this.tiles.length - 1
     );
   }
 
