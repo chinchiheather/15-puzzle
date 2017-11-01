@@ -141,9 +141,9 @@ export class Board {
   hasWon() {
     // checks if numbers in tileOrder array are in numeric order, skipping the last tile
     // as this will have a number of 0 for the blank tile in a winning layout
-    return this.tileOrder.every((number, i) =>
-      number === i + 1 || i === this.tiles.length - 1
-    );
+    return this.tileOrder.every((number, i) => {
+      return number === i + 1 || i === this.tiles.length
+    });
   }
 
   /**
